@@ -30,3 +30,6 @@ struct boid_system{
 float rand_normalize();
 struct boid_system *boid_init(unsigned, float, float, float, float);
 void boid_release(struct boid_system *);
+Vector2 boid_separation(struct boid *);
+Vector2 boid_cohesion(struct boid *);
+Vector2 boid_alignment(struct boid *);
