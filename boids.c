@@ -58,6 +58,10 @@ Vector2 boid_separation(struct boid *myboid){
     for(int i = 0; i < myboid->neighbors.n; i++){
         // calculate each displacement between the boid and its neighbors
         Vector2 displacement = Vector2Subtract(myboid->position, myboid->neighbors.buds[i]->position);
+        // find displacement magnitude
+        float displacement_length = Vector2Length(displacement);
+        // normalize displacement and divide by its length
+        displacement = Vector2Divide(Vector2Normalize(displacement), displacement_length); 
         // sum displacement vectors and accel vector
         acceleration = Vector2Add(acceleration, displacement);
     }
@@ -67,15 +71,18 @@ Vector2 boid_separation(struct boid *myboid){
 Vector2 boid_cohesion(struct boid *myboid){
     // start with zero sum vector
     Vector2 sum = Vector2Zero();
+    Vector2 displacement = Vector2Zero();
     // sum the position of every neighbor boid
     for(int i = 0; i < myboid->neighbors.n; i++){
         sum = Vector2Add(sum, myboid->neighbors.buds[i]->position);
     }
-    // divide by number of neighbors to get average pos
-    Vector2 avg_pos = Vector2Divide(sum, myboid->neighbors.n);
-    // find displacement between boid pos and average pos
-    Vector2 displacement = Vector2Subtract(avg_pos, myboid->position);
-    // return displacement vector for accel
+    if(myboid->neighbors.n > 0){
+        // divide by number of neighbors to get average pos
+        Vector2 avg_pos = Vector2Divide(sum, myboid->neighbors.n);
+        // find displacement between boid pos and average pos
+        displacement = Vector2Subtract(avg_pos, myboid->position);
+        // return displacement vector for accel
+    }
     return (displacement);
 }
 
