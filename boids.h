@@ -2,28 +2,31 @@
 
 #include "raylib.h"
 
+// define boid neighbor 
+struct neighborhood{
+    struct boid **buds; // array of struct boid POINTERS(second pointer)
+    unsigned n; // number of buds
+    float radius; // radius of field
+};
+
 // define struct boid
 struct boid{
-    Vector2 position;
-    Vector2 velocity;
-    Vector2 acceleration;
-    struct boid_neighbor bud;
-}
-
-// define boid neighbor 
-struct boid_neighbor{
-    struct boid **buds;
-    unsigned n; // number of boids
-    float radius; 
-}
+    Vector2 position; // where is it
+    Vector2 velocity; // how fast is it going
+    float max_velocity; // max speed
+    //Vector2 acceleration; // how fast is it accelerating
+    struct neighborhood neighbors; // neighbors
+};
 
 // define boid system 
 struct boid_system{
     struct boid *boids;
-    int n;
+    unsigned n;
     float width;
     float height;
-}
+};
 
-// boid functions
-void boid_init(int, Vector2, float);
+// boid function prototypes
+float rand_normalize();
+struct boid_system *boid_init(unsigned, float, float, float, float);
+void boid_release(struct boid_system *);
