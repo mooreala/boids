@@ -33,3 +33,4 @@ void boid_release(struct boid_system *);
 Vector2 boid_separation(struct boid *);
 Vector2 boid_cohesion(struct boid *);
 Vector2 boid_alignment(struct boid *);
+void boid_pos_update(struct boid *);

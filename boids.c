@@ -106,3 +106,45 @@ for(int i = 0; i < myboid->neighbors.n; i++){
 return (velocity);
 }
 
+void boid_pos_update(struct boid *myboid, float screenWidth, float screenHeight){
+    Vector2 separation = boid_separation(myboid);
+    Vector2 cohesion = boid_cohesion(myboid);
+    cohesion = Vector2Scale(cohesion, 0.003);
+    Vector2 alignment = boid_alignment(myboid);
+
+    Vector2 sum = Vector2Add(separation, cohesion);
+    sum = Vector2Add(sum, alignment);
+
+    myboid->velocity = Vector2Add(myboid->velocity, sum);
+    myboid->position = Vector2Add(myboid->position, myboid->velocity);
+
+    // wrap
+    if(myboid->position.x < 0){
+        myboid->position.x = myboid->position.x + screenWidth;
+    }
+    if(myboid->position.x > screenWidth){
+        myboid->position.x = myboid->position.x - screenWidth;
+    }
+    if(myboid->position.y < 0){
+        myboid->position.y = myboid->position.y + screenHeight;
+    }
+    if(myboid->position.y > screenHeight){
+        myboid->position.y = myboid->position.y - screenHeight;
+    }
+}
+
+void boid_update(struct boid_system *myboid_sys){
+    for(int i = 0; i < myboid_sys->n; i++){
+        boid_pos_update(&(myboid_sys->boids[i]), myboid_sys->width, myboid_sys->height);
+    }
+}
+
+void draw_boid(struct boid *myboid){
+    DrawCircle(myboid->position.x, myboid->position.y, 5, BLACK);
+}
+
+void draw_boid_system(struct boid_system *myboid_sys){
+    for(int i = 0; i < myboid_sys->n; i++){
+        draw_boid(&(myboid_sys->boids[i]));
+    }
+}
