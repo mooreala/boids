@@ -9,11 +9,11 @@ int main(){
     srand(time(NULL));
    
     // define screen size
-    float screenWidth = 800;
-    float screenHeight = 450;
+    float screenWidth = 1600;
+    float screenHeight = 900;
 
     // create boid system
-    struct boid_system *myboid_sys = boid_init(20, screenWidth, screenHeight, 3, 200);
+    struct boid_system *myboid_sys = boid_init(200, screenWidth, screenHeight, 2, 150);
     
     InitWindow(screenWidth, screenHeight, "boids");
     
@@ -22,8 +22,8 @@ int main(){
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        boid_update(myboid_sys);
         boid_update_neighbors(myboid_sys);
+        boid_update(myboid_sys);
         
         BeginDrawing();
 

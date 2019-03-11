@@ -15,7 +15,7 @@ struct boid_system *boid_init(unsigned num, float screenWidth, float screenHeigh
     struct boid_system *myboid_sys = malloc(sizeof(struct boid_system));
     myboid_sys->n = num;
     myboid_sys->width = screenWidth;
-    myboid_sys->height = screenWidth;
+    myboid_sys->height = screenHeight;
 
     // init boid array
     struct boid *myboids = malloc(sizeof(struct boid)*num); // returns a pointer to an array of struct boids
@@ -116,6 +116,10 @@ void boid_pos_update(struct boid *myboid, float screenWidth, float screenHeight)
     sum = Vector2Add(sum, alignment);
 
     myboid->velocity = Vector2Add(myboid->velocity, sum);
+    if(Vector2Length(myboid->velocity) > myboid->max_velocity){
+            myboid->velocity = Vector2Normalize(myboid->velocity);
+            myboid->velocity = Vector2Scale(myboid->velocity, myboid->max_velocity);
+    }
     myboid->position = Vector2Add(myboid->position, myboid->velocity);
 
     // wrap
@@ -150,7 +154,7 @@ void boid_update_neighbors(struct boid_system *myboid_sys){
             // check that the boid is in within radius and i =/= j
             if(displacement_length <= myboid_sys->boids[i].neighbors.radius && i != j){
                 // include the boid[j] in the neighborhood of boid[i]
-                myboid_sys->boids[i].neighbors.buds[myboid_sys->boids[i].neighbors.n] = myboid_sys->boids[j];
+                myboid_sys->boids[i].neighbors.buds[myboid_sys->boids[i].neighbors.n] = &myboid_sys->boids[j];
                 //increment number of boids
                 myboid_sys->boids[i].neighbors.n++;
 
@@ -160,7 +164,7 @@ void boid_update_neighbors(struct boid_system *myboid_sys){
 }
 
 void draw_boid(struct boid *myboid){
-    DrawCircle(myboid->position.x, myboid->position.y, 5, BLACK);
+    DrawCircle(myboid->position.x, myboid->position.y, 5, PINK);
 }
 
 void draw_boid_system(struct boid_system *myboid_sys){
