@@ -139,6 +139,26 @@ void boid_update(struct boid_system *myboid_sys){
     }
 }
 
+void boid_update_neighbors(struct boid_system *myboid_sys){
+    for(int i = 0; i < myboid_sys->n; i++){
+        myboid_sys->boids[i].neighbors.n = 0; // set neighbors for every boid to zero
+        for(int j = 0; j < myboid_sys->n; j++){
+            // calculate displacement
+            Vector2 displacement = Vector2Subtract(myboid_sys->boids[j].position, myboid_sys->boids[i].position);
+            // find mag of displacement
+            float displacement_length = Vector2Length(displacement);
+            // check that the boid is in within radius and i =/= j
+            if(displacement_length <= myboid_sys->boids[i].neighbors.radius && i != j){
+                // include the boid[j] in the neighborhood of boid[i]
+                myboid_sys->boids[i].neighbors.buds[myboid_sys->boids[i].neighbors.n] = myboid_sys->boids[j];
+                //increment number of boids
+                myboid_sys->boids[i].neighbors.n++;
+
+            }
+        }
+    }
+}
+
 void draw_boid(struct boid *myboid){
     DrawCircle(myboid->position.x, myboid->position.y, 5, BLACK);
 }
