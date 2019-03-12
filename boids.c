@@ -106,13 +106,28 @@ for(int i = 0; i < myboid->neighbors.n; i++){
 return (velocity);
 }
 
+Vector2 avoid_mouse(struct boid *myboid){
+    Vector2 acceleration = Vector2Zero();
+    // calculate each displacement between the boid and the mouse
+    Vector2 displacement = Vector2Subtract(myboid->position, GetMousePosition());
+    // find displacement magnitude
+    float displacement_length = Vector2Length(displacement);
+    if(displacement_length < myboid->neighbors.radius){
+        // normalize displacement and divide by its length
+        acceleration = Vector2Scale(Vector2Normalize(displacement), displacement_length); 
+    }
+    return (acceleration);
+}
+
 void boid_pos_update(struct boid *myboid, float screenWidth, float screenHeight){
     Vector2 separation = boid_separation(myboid);
     Vector2 cohesion = boid_cohesion(myboid);
     cohesion = Vector2Scale(cohesion, 0.003);
     Vector2 alignment = boid_alignment(myboid);
+    Vector2 avoidMouse = avoid_mouse(myboid); 
 
     Vector2 sum = Vector2Add(separation, cohesion);
+    sum = Vector2Add(sum, avoidMouse);
     sum = Vector2Add(sum, alignment);
 
     myboid->velocity = Vector2Add(myboid->velocity, sum);
